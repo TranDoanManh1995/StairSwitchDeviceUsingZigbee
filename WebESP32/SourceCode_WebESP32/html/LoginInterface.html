@@ -1,0 +1,442 @@
+<!--
+ * LoginInterface.html
+ *   
+ *  Author: Tran Doan Manh
+ *  Description: The login interface
+-->
+
+    <!------------ Start Web page ----------->
+
+<!DOCTYPE html>             <!-- Define the "html" version is used - using HTML5 -->
+<html lang="en">            <!-- Declare the language of the Web page - lang="en"/English -->
+
+    <!------------ Declare the information of Web such as title, character encoding table, links, scripts... ----------->
+
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoginIntoWebControlZigbeeDevices</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>
+</head>
+
+    <!------------------------------ Create CSS for Web -------------------------------->
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"); 
+    *{ /* Configure common for all elements of HTML */
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+    body{ /* Configure all elements of "body" card */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: url('https://img.freepik.com/premium-photo/great-picture-everything-you-with-it-will-be-lively_987032-77079.jpg?w=740') no-repeat;
+        background-size: 100%;
+        background-position: center;
+    }
+
+        /*--------------- Configure the "header" section ---------------*/
+
+    header{ /* Configure all elements of "header" card */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px, 100px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 99;
+    }
+    .logo{ /* Configure "logo" class */
+        font-size: 1.75rem;
+        color: #F5A623;
+        user-select: none;
+        margin-left: 20px;
+    }
+    .btnLogin-popup{ /* Configure "btnLogin-popup" class */
+        width: 130px;
+        height: 50px;
+        background: transparent;
+        border: 2px solid #fff;
+        outline: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.1em;
+        color: #fff;
+        font-weight: 500;
+        margin-right: 20px;
+        margin-top: 20px;
+        transition: .5s;
+    }
+    .btnLogin-popup:hover{ /* Change efect when moving the mouse into Login */
+        background: #F5A623;
+        color: #483D8B;
+    }
+
+        /*--------------- Configure the "wrapper" section ---------------*/
+
+    .wrapper{ /* Configure common "wrapper" class */
+        position: relative;
+        width: 400px;
+        height: 440px;
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 0 10px 2px rgb(255, 255, 255, 0.8);
+        color: #fff;
+        border-radius: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        transform: scale(0); 
+        transition: transform .5s ease, height .2s ease;
+    }
+
+        /*----- Configure the "icon-close" class -----*/
+    .wrapper .icon-close{
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 25px;
+        height: 25px;
+        background: #fff;
+        font-size: 1em;
+        color: #162938;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom-left-radius: 10px;
+        cursor: pointer;
+        z-index: 1;
+    }   
+    .wrapper.active-popup{ /* Hide/display the "Login/Register" form */
+        transform: scale(1); 
+    }
+    .wrapper .form-box{ /* Configure common "form-box" class */
+        width: 100%;
+        padding: 40px;
+    }
+    .form-box h1{ /* Configure "h1" header in "form-box" class */
+        font-size: 2em;
+        color: #fff;
+        text-align: center;
+    }
+
+        /*----- Configure "input-box" class -----*/
+    .input-box{ /* Configure common "input-box" class */
+        position: relative;
+        width: 100%;
+        height: 50px;
+        border-bottom: 2px solid #fff;
+        margin: 30px 0;
+    }
+    .input-box .icon{ /* Configure "icon" class in "input-box" class */
+        position: absolute;
+        right: 8px;
+        font-size: 1.2em;
+        color: #fff;
+        line-height: 57px;
+    }
+    .input-box input{ /* Configure "input" card in "input-box" class */
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: 1em;
+        color: #fff;
+        font-weight: 600;
+        padding: 0 35px 0 5px;
+    }
+    .input-box input:focus~label,
+    .input-box input:valid~label{ /* Create effect when writing information into input box */
+        top: -5px;
+    }
+    .input-box label{ /* Configure  "label" card in "input-box" class */
+        position: absolute;
+        top: 50%;
+        left: 5px;
+        transform: translateY(-50%);
+        font-size: 1em;
+        color: #fff;
+        font-weight: 500;
+        pointer-events: none;
+        transition: .5s;
+    }
+    .input-box #toggle-eye-login{ /* Configure "toggle-eye-login" id in "input-box" class */
+        position: absolute;
+        top: 3px;
+        right: 30px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        font-size: 1em;
+        cursor: pointer;
+        user-select: none;
+        color: #fff;
+    }
+    .input-box #toggle-eye-register{ /* Configure "toggle-eye-register" id in "input-box" class */
+        position: absolute;
+        top: 3px;
+        right: 30px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        font-size: 1em;
+        cursor: pointer;
+        user-select: none;
+        color: #fff;
+    }
+    .input-box #toggle-eye-login::before{ /* Change eye icon when press into eye icon at login form */
+        content: '\f070';
+        font-family: fontAwesome;
+    }
+    .input-box #toggle-eye-login.hide::before{
+        content: '\f06e';
+        font-family: fontAwesome;
+    }
+    .input-box #toggle-eye-register::before{ /* Change eye icon when press into eye icon at regsiter form*/
+        content: '\f070';
+        font-family: fontAwesome;
+    }
+    .input-box #toggle-eye-register.hide::before{
+        content: '\f06e';
+        font-family: fontAwesome;
+    }
+
+        /*----- Configure "remember-forgot" class -----*/
+    .remember-forgot{ /* Configure common "remember-forgot" class */
+        font-size: .9em;
+        color: #fff;
+        font-weight: 500;
+        margin: -15px 0 15px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .remember-forgot label input{ /* Configure "input" card in "label" card and "remember-forgot" class */
+        accent-color: #162938;
+        margin-right: 3px;
+    }
+    .remember-forgot a{ /* Configure "a" card in "remember-forgot" class */
+        color: #333;
+        text-decoration: none;
+    }
+    .remember-forgot a:hover{ /* Change efect when moving the mouse in Register */
+        text-decoration: underline;
+    }
+
+        /*----- Configure "btn" class -----*/
+    .btn{ /* Configure common "btn" class */
+        width: 100%;
+        height: 45px;
+        background: #fff;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        box-shadow: 0 0 10px rgba(0, 0 , 0, .1);
+        cursor: pointer;
+        font-size: 1em;
+        color: #333;
+        font-weight: 600;
+    }
+    .btn:hover{ /* Change efect when moving the mouse into Login */
+        background: #333;
+        color: #fff;
+    }
+
+        /*----- Configure "login-register" class -----*/
+    .login-register{ /* Configure common "login-register" class */
+        font-size: .9em;
+        color: #fff;
+        text-align: center;
+        font-weight: 500;
+        margin: 15px 0 10px;
+    }
+    .login-register p a{ /* Configure "a" card in "p" card and "login-register" class */
+        color: #333;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .login-register p a:hover{ /* Change efect when moving the mouse into Login or Register*/
+        text-decoration: underline;
+    }
+    .wrapper .form-box.register{ /* Convert between "Login" form with "Register" form */
+        position: absolute;
+        transition: none;
+        transform: translateX(400px);
+    }
+    .wrapper.active .form-box.register{
+        transition: transform .18s ease;
+        transform: translateX(0);
+    }
+    .wrapper .form-box.login{ /* Convert between "Register" form with "Login" form */
+        transition: transform .18s ease;
+        transform: translateX(0); 
+    }  
+    .wrapper.active .form-box.login{
+        transition: none;
+        transform: translateX(-400px);
+    }
+</style>
+
+    <!-------------------------------- Create body for Web -------------------------------->
+    
+<body>
+        <!---------------------------- Create navbar in HTML ----------------------------->
+    <header>
+        <h1 class="logo">SMART HOME</h1>
+        <nav>
+            <button class="btnLogin-popup">Login</button>
+        </nav>
+    </header>
+
+        <!---------------------------- Create the login and register form ----------------------------->
+	<div class="wrapper">
+            <!-- Create opening/closing icon -->
+        <span class="icon-close">
+            <ion-icon name="close"></ion-icon>
+        </span>
+
+            <!---------- Create the "Login" form ---------->
+        <div class="form-box login">
+            <h1>Login</h1>
+    	    <form action="#">
+                    <!-- Create the "Username" input box of "Login" form -->
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="person"></ion-icon></span>
+                    <input id="username-login" type="text" required>
+                    <label>Username</label>
+                </div>
+                    <!-- Create the "Password" input box of "Login" form -->
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                    <input type="password" id="password-login" required>
+                    <div id="toggle-eye-login" onclick="showhidePassword_Login()"></div>
+                    <label>Password</label>
+                </div>
+                    <!-- Create the "Remember me" checkbox of "Login" form -->
+                <div class="remember-forgot">
+                    <label><input type="checkbox"> Remember me </label>
+                    <a href="#">Forget password?</a>
+                </div>
+                    <!-- Create the "Login" button of "Login" form -->
+                <button type="submit" class="btn" onclick="Login()">Login</button>
+                    <!-- Create a conversion from "Login" form to "Register" form -->
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link">Register</a></p>
+                </div>
+            </form>
+        </div>
+
+            <!---------- Create the "Register" form ---------->
+        <div class="form-box register">
+            <h1>Registration</h1>
+    	    <form action="#">
+                    <!-- Create the "Username" input box of "Register" form -->
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="person"></ion-icon></span>
+                    <input id="username-register" type="text" required>
+                    <label>Username</label>
+                </div>
+                    <!-- Create the "Password" input box of "Register" form -->
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                    <input type="password" id="password-register" required>
+                    <div id="toggle-eye-register" onclick="showhidePassword_Register()">
+                    </div>
+                    <label>Password</label>
+                </div>
+                    <!-- Create the "I agree to the terms and conditions" checkbox of "Register" form -->
+                <div class="remember-forgot">
+                    <label><input type="checkbox"> I agree to the terms and conditions </label>
+                </div>
+                    <!-- Create the "Register" button of "Register" form -->
+                <button type="submit" class="btn" onclick="Register()">Register</button>
+                    <!-- Create a conversion from "Register" form to "Login" form -->
+                <div class="login-register">
+                    <p>Already have an account? <a href="#" class="login-link">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <!-- Add file javascript into HTML -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+
+    <!-------------------------------- Create javascript for Web -------------------------------->
+
+<script>
+        /* --------------- All variables to use the Javacript functions --------------*/
+
+    var xhttp = new XMLHttpRequest();                                               // Create "XMLHttpRequest" object to send HTTP request (GET, POST, PUT, DELETE,...) to ESP32
+    const wrapper = document.querySelector('.wrapper');                             // Change attribute of some 'id', 'class' in the "wrapper" class
+    const btnPopup = document.querySelector('.btnLogin-popup');                     // Hide/display the "Login/Register" form
+    const iconClose = document.querySelector('.icon-close');
+    const password_login = document.getElementById('password-login');               // Change eye icon when press into eye icon at login form
+    const toggle_eye_login = document.getElementById('toggle-eye-login');
+    const password_register = document.getElementById('password-register');         // Change eye icon when press into eye icon at register form
+    const toggle_eye_register = document.getElementById('toggle-eye-register');
+    const loginLink = document.querySelector('.login-link');                        // Convert between "Login" form with "Register" form
+    const registerLink = document.querySelector('.register-link');
+    
+        /* --------------- All Javacript functions --------------*/  
+
+        /* Hide/display the "Login/Register" form */
+    btnPopup.onclick = () => {
+        wrapper.classList.add('active-popup');
+    };
+    iconClose.onclick = () => {
+        wrapper.classList.remove('active-popup');
+    };
+        /* Change eye icon when press into eye icon at login form */
+    function showhidePassword_Login() {
+        if(password_login.type == 'password'){
+            password_login.setAttribute('type', 'text');
+            toggle_eye_login.classList.add('hide');
+        } else{
+            password_login.setAttribute('type', 'password');
+            toggle_eye_login.classList.remove('hide');
+        }
+    }
+        /* Change eye icon when press into eye icon at login form */
+    function showhidePassword_Register(){
+        if(password_register.type == 'password'){
+            password_register.setAttribute('type', 'text');
+            toggle_eye_register.classList.add('hide');
+        } else{
+            password_register.setAttribute('type', 'password');
+            toggle_eye_register.classList.remove('hide');
+        }
+    }
+        /* Convert between "Login" form with "Register" form */
+    registerLink.onclick = () => {
+        wrapper.classList.add('active');
+    };
+    loginLink.onclick = () => {
+        wrapper.classList.remove('active');
+    };
+        /* Register and login the username, password of user */
+    function Login(){
+        var username_login =  document.getElementById("username-login").value ;
+        var password_login =  document.getElementById("password-login").value ;
+        xhttp.open("POST", "/loginAccount", true);      
+        xhttp.send(username_login + password_login);
+    }
+    function Register(){
+        var username_register =  document.getElementById("username-register").value ;
+        var password_register =  document.getElementById("password-register").value ;
+        xhttp.open("POST", "/registerAccount", true);      
+        xhttp.send(username_register + password_register);
+    }
+</script>
+</html>

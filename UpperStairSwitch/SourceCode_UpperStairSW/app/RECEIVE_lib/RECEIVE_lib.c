@@ -1,0 +1,160 @@
+/*
+ * RECEIVE_lib.c
+ *
+ *  Created on: June 03 , 2024
+ *  Author: TRAN DOAN MANH
+ *  Descriptor: To process the messages that receive from ZC & Upper stair
+ */
+
+	/*------------------------------- All libraries -------------------------------*/
+
+#include "app/framework/include/af.h"
+#include "source/app/main/main.h"
+#include "source/app/RECEIVE_lib/RECEIVE_lib.h"
+#include "source/app/TRANSMIT_lib/TRANSMIT_lib.h"
+#include "source/driver/PIR_lib/PIR_lib.h"
+#include "source/mid/LED_lib/LED_lib.h"
+
+	/*------------------------------- Initialize variables -------------------------------*/
+
+	// Variable
+extern MAIN_stateStairLight_e MAIN_stateStairLight;			// Initialize the state of stair light
+
+	/*------------------------------- All functions -------------------------------*/
+
+/*
+ * @func emberAfPluginFindAndBindInitiatorCompleteCallback
+ * @brief To check whether the binding process is successful
+ * @param statusBindingProcess - The status of binding process
+ * @retval None
+ */
+void emberAfPluginFindAndBindInitiatorCompleteCallback(EmberStatus statusBindingProcess)
+{
+	if(statusBindingProcess == EMBER_SUCCESS){
+		if(bindingControlStairLight == true){
+			LED_blinkLed(LED_2, LED_Green, 3, 300, 300);
+			bindingControlStairLight = false;
+		} else if(bindingSynchronizePIRtime == true){
+			LED_blinkLed(LED_2, LED_Blue, 3, 300, 300);
+			bindingSynchronizePIRtime = false;
+		}
+	}
+}
+
+/*
+ * @func emberAfPreCommandReceivedCallback
+ * @brief To process ZCL command
+ * @param commandInf - Pointer variable of the struct type "EmberAfClusterCommand"
+ * 					   to get information of incoming message
+ * @retval True/False
+ */
+bool emberAfPreCommandReceivedCallback(EmberAfClusterCommand* commandInf)
+{
+	if(commandInf->clusterSpecific){
+		switch(commandInf->apsFrame->clusterId){
+			case ZCL_ON_OFF_CLUSTER_ID:
+				RECEIVE_processOnOffCluster(commandInf);
+				break;
+
+			case ZCL_IAS_ZONE_CLUSTER_ID:
+				RECEIVE_processIASZoneCluster(commandInf);
+				break;
+
+			case ZCL_IDENTIFY_CLUSTER_ID:
+				RECEIVE_processIdentifyCluster(commandInf);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	return false;
+}
+
+/*
+ * @func RECEIVE_processOnOffCluster
+ * @brief To control the stair light and select the control mode
+ * @param commandInf - Pointer variable of the struct type "EmberAfClusterCommand"
+ * 					   to get information of incoming message
+ * @retval None
+ */
+void RECEIVE_processOnOffCluster(EmberAfClusterCommand* commandInf)
+{
+	switch(commandInf->commandId){
+		case ZCL_ON_COMMAND_ID:
+			if(commandInf->apsFrame->sourceEndpoint == 1){ // That endpoint could belong to BelowSW or Zigbee Coordinator
+				if(commandInf->source == NETWORKID_ZC){
+					MAIN_synchronizeStateStairLight_ControlMode_PIRtimeWithBelowSW(MAIN_networkIdUpperSW,
+																				  MAIN_EndpointStairLight,
+																				  STAIRLIGHT_ENDPOINT_BELOWSW,
+																				  ZCL_ON_OFF_CLUSTER_ID,
+																				  ZCL_ON_COMMAND_ID);
+				} else MAIN_stateStairLight = MAIN_LightON;
+			} else if(commandInf->apsFrame->sourceEndpoint == PIR_CONTROLMODE_ENDPOINT_BELOWSW){
+				MAIN_selectControlMode(MAIN_ModeAuto, LED_Blue, PIR_EnableInterrupt);
+			}
+			break;
+
+		case ZCL_OFF_COMMAND_ID:
+			if(commandInf->apsFrame->sourceEndpoint == 1){ // That endpoint could belong to BelowSW of Zigbee Coordinator
+				if(commandInf->source == NETWORKID_ZC){
+					MAIN_synchronizeStateStairLight_ControlMode_PIRtimeWithBelowSW(MAIN_networkIdUpperSW,
+																				   MAIN_EndpointStairLight,
+																				   STAIRLIGHT_ENDPOINT_BELOWSW,
+																				   ZCL_ON_OFF_CLUSTER_ID,
+																				   ZCL_OFF_COMMAND_ID);
+				} else MAIN_stateStairLight = MAIN_LightOFF;
+			} else if(commandInf->apsFrame->sourceEndpoint == PIR_CONTROLMODE_ENDPOINT_BELOWSW){
+				MAIN_selectControlMode(MAIN_ModeManual, LED_Red, PIR_DisableInterrupt);
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
+/*
+ * @func RECEIVE_processIASZoneCluster
+ * @brief To get the motion signal from UpperSW and synchronize
+ * @param commandInf - Pointer variable of the struct type "EmberAfClusterCommand"
+ * 					   to get information of incoming message
+ * @retval None
+ */
+void RECEIVE_processIASZoneCluster(EmberAfClusterCommand* commandInf)
+{
+	switch(commandInf->commandId){
+		case ZCL_ZONE_ENROLL_RESPONSE_COMMAND_ID:
+			PIR_stateFindingMotion = PIR_StateWait2s;
+			emberEventControlSetActive(PIR_detectMotionEventControl);
+			break;
+
+		default:
+			break;
+	}
+}
+
+/*
+ * @func RECEIVE_processIdentifyCluster
+ * @brief To define the binding process of controlling the stair light or synchronizing the PIR time on two stair SWs
+ * @param commandInf - Pointer variable of the struct type "EmberAfClusterCommand"
+ * 					   to get information of incoming message
+ * @retval None
+ */
+void RECEIVE_processIdentifyCluster(EmberAfClusterCommand* commandInf)
+{
+	if(commandInf->source != MAIN_networkIdUpperSW){
+		if(commandInf->apsFrame->sourceEndpoint == STAIRLIGHT_ENDPOINT_BELOWSW
+				&& commandInf->apsFrame->destinationEndpoint == MAIN_EndpointStairLight)
+		{
+			bindingControlStairLight = true;
+		} else if(commandInf->apsFrame->sourceEndpoint == PIR_CONTROLMODE_ENDPOINT_BELOWSW
+				&& commandInf->apsFrame->destinationEndpoint == MAIN_EndpointPIRAndControlMode)
+		{
+			bindingSynchronizePIRtime = true;
+		}
+	}
+}
+
+	/*------------------------------- END THIS FILE -------------------------------*/

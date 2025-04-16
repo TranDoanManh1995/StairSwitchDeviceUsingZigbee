@@ -6,8 +6,10 @@ Trong đồ án này, tôi tạo ra thiết bị ***"Công tắc cầu thang"***
 - Điều khiển đèn tự động sử dụng cảm biến chuyển động PIR
 ## Mục đích của giải pháp
  Việc sử dụng “Giải pháp IoT cho thiết bị công tắc cầu thang” sẽ mang đến trải nghiệm tiện lợi, linh hoạt cho người sử dụng so với công tắc cầu thang truyền thống như tính năng tự động hóa việc bật/tắt, tính năng điều khiển từ xa bằng điện thoại di động và các thiết bị thông minh khác. Đây là một xu hướng không thể phủ nhận trong thế giới ngày nay, khi mà sự kết nối và tiện ích là những yếu tố quan trọng trong cuộc sống hiện đại.
- ## Mô hình thiết bị "Công tắc cầu thang"
+## Mô hình thiết bị "Công tắc cầu thang"
 https://drive.google.com/file/d/17NeLl7-5Ceu0ehRBhgvjsyoKNeBQOdhk/view?usp=sharing
+## Demo hoạt động thiết bị "Công tắc cầu thang"
+https://drive.google.com/file/d/1K5xL6XcxeafaiWH1vzrsl4SNXHBwHxS0/view?usp=sharing
 ## Thành phần thiết bị "Công tắc cầu thang"
 - **WebLocal** để thực hiện các tính năng của mạng Zigbee, điều khiển đèn cầu thang và cập nhật thông số của cảm biến.
 - 01 thiết bị **EFR32** có nhiệm vụ tạo mạng và quản lý toàn bộ các thiết bị gia nhập mạng được gọi là **Zigbee Coordinator** *(ZC)*. 
